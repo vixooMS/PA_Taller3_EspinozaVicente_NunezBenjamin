@@ -1,0 +1,83 @@
+Operación: RegistrarNuevoEmpleado (Cadena de texto rut, cadena de texto Nombre,cadena de texto Contraseña, números enteros remuneración, cadena detexto campos especificos)
+
+Descripción: Se ingresa toda la información necesaria de un empleado, incluyendo el tipo de empleado que se desea ingresar. 
+
+Pre-condiciones: Verificar que la persona que registre sea administrador.
+		-El rut del empleaod no debe existir previamente en el sistema
+		-Si el tipo de empleado es cajero, no debe existir otro empleado con el mismo numero de caja
+
+Post-condiciones:  El nuevo empelado se agrega correctamente al sistema y queda almacenado
+-------------------------------------------------------------------
+Operación: ListarEmpleados
+
+Descripción: Se imprime toda la información de los empleados registrados.
+
+Pre-condiciones: -Verificar el rol de el usuario
+
+Post-condiciones: No hay cambios en el sistema, solo se muestran los resultados por pantalla. 
+-------------------------------------------------------------------
+Operación: ListarProductos
+
+Descripción: Se muestran por pantalla todos los productos registrados, si el producto tiene una cantidad menor a 5 se muestra un mensaje de "bajo stock"
+
+Pre-condiciones: El producto debe contar con un stock superior a 5 unidades
+		-Se debe verificar el rol del usuario
+
+Post-condiciones: No hay cambios en el sistema, solo se muestran los resultados por pantalla. 
+-------------------------------------------------------------------
+Operación: ListarTodasLasVentas
+
+Descripción: Se debe mostrar por pantalla todas las ventas realizadas por los cajeros, incluyendo la lista de productos(sus respectivos códigos y nombres) de cada venta y monto real.
+
+Pre-condiciones: Verificar que el usuario sea administrador
+
+Post-condiciones: No hay cambios en el sistema, solo se muestran los resultados por pantalla. 
+-------------------------------------------------------------------
+Operación: RealizarVenta ()
+
+Descripción: Se ingresa el RUT del cliente y los códigos de los productos que se desean comprar. Se aplican descuentos correspondientes y se descuenta stock.
+
+Pre-condiciones: Verificar que el usuario sea Cajero
+		-Debe existir un producto valido entre los códigos ingresados
+		-El cajero debe tener una sesión activa con su descuetno aleatorio (Alimento o bebida)
+
+Post-condiciones: -Se crea Venta con sus respectivos detalles de venta
+		  -Se descuenta del stock la cantidad vendida de  cada producto
+		  -El cajero acumula el 5% del total de la venta como incentivo
+		  - La venta se agrega al historial del sistema 
+-------------------------------------------------------------------
+Operación: VerVentasRealizadas
+
+Descripción: Se debe imprimir (mostrar en pantalla) el detalle de las ventas realizadas por el empleado y su respectivo porcentaje de dinero ganado.
+
+Pre-condiciones:-Si le usaurio es cajero, solo puede ver sus propias ventas
+		-Si el usuario es administrador, puede ver las ventas de cualquier empleado
+
+Post-condiciones: No hay cambios en el sistema, solo se muestran los resultados por pantalla. 
+
+-------------------------------------------------------------------
+Operación: ReponerStock 
+
+Descripción: Se ingresa el código del producto, verificando que este sea el mismo que maneja el reponedor. Luego se ingresa una cantidad de stock que se sumara al producto correspondiente.
+
+Pre-condiciones:-Verificar que el usuario sea reponedor
+		-Verificar que la cantidad sea mayor a 0
+		-Verificar que el código exista del producto exista en el sistema
+		-El tipo de producto debe coincidir con la categoría que maneja el reponedor.
+
+
+Post-condiciones:-Se actualiza el stock del producto
+		 -Se incrementa el contador de unidades repuestas por el reponedor
+			
+-------------------------------------------------------------------
+Operación: EliminarStock
+
+Descripción: Para eliminar el stock, se debe verificar que el código del producto corresponda al tipo que maneja el empleado, además se solicita confirmación por pantalla antes de eliminar completamente el stock del producto.
+
+Pre-condiciones:-Verificar que el usuario es un reponedor
+		-Verificar que el código del producto exista
+		-Verificar que el tipo de producto corresponda al manejado por el reponedor
+		-Confirmación de eliminación por pantalla
+		-El stock del producto se establece en 0
+
+Post-condiciones: 
