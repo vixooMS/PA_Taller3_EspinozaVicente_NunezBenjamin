@@ -1,0 +1,253 @@
+@startuml
+skinparam classAttributeIconSize 0
+title Taller 3 - Diagrama de Clases OP
+
+' ===== ENUMS =====
+enum TipoProducto {
+BG
+BA
+BC
+AP
+AN
+AC}
+enum CategoriaProducto {
+ALIMENTO
+BEBIDA}
+
+' ===== INTERFACES =====
+interface IProducto {
+  +disponible(): boolean
+  +ajustarStock(delta:int): void
+  +getId(): String
+  +getNombre(): String
+  +getPrecio(): int
+  +getStock(): int
+  +setStock(s:int): void
+}
+interface IEmpleado {
+  +autenticar(pass:String): boolean
+  +getTipo(): String
+  +getRut(): String
+  +getNombre(): String
+}
+interface IArchivoParser {
+  +parseProductos(path:String): List<Producto>
+  +parseEmpleados(path:String): List<Empleado>
+}
+
+' ===== PRODUCTO BASE =====
+class Producto implements IProducto {
+  -id: String
+  -nombre: String
+  -precio: int
+  -marca: String
+  -stock: int
+  -tipo: TipoProducto
+  -proveedor: String
+  +Producto(id:String,nombre:String,precio:int,marca:String,stock:int,tipo:TipoProducto,proveedor:String)
+  +getId(): String
+  +setId(id:String): void
+  +getNombre(): String
+  +setNombre(n:String): void
+  +getPrecio(): int
+  +setPrecio(p:int): void
+  +getMarca(): String
+  +setMarca(m:String): void
+  +getStock(): int
+  +setStock(s:int): void
+  +getTipo(): TipoProducto
+  +getCategoria(): CategoriaProducto
+  +disponible(): boolean
+  +ajustarStock(delta:int): void
+}
+
+' ===== CAPAS INTERMEDIAS =====
+abstract class Bebida extends Producto {
+  -volumenL: double
+  -tipoEnvase: String
+}
+abstract class Alimento extends Producto { }
+
+' ===== SUBTIPOS =====
+class BebidaGeneral extends Bebida {
+  -azucar: boolean
+}
+class BebidaAlcoholica extends Bebida {
+  -alcoholPct: double
+  -paisOrigen: String
+  -restriccionEdad: int
+  +requiereEdadValida(edad:int): boolean
+}
+class BebidaCaliente extends Bebida {
+  -tipo: String
+  -temperaturaServir: double
+}
+
+class AlimentoPerecible extends Alimento {
+  -refrigerado: boolean
+  -fechaVencimiento: LocalDate
+  -instrucciones: String
+  +estaVencido(hoy:LocalDate): boolean
+}
+class AlimentoNoPerecible extends Alimento {
+  -duracion: String
+  -formatoEmpaque: String
+}
+class AlimentoCongelado extends Alimento {
+  -tempConservacion: String
+  -fechaEnvasado: LocalDate
+}
+
+' ===== EMPLEADOS =====
+class Empleado implements IEmpleado {
+  -tipo: String  ' "AD" | "CA" | "RE"
+  -rut: String
+  -password: String
+  -nombre: String
+  -remuneracion: int
+  +Empleado(tipo:String,rut:String,password:String,nombre:String,remuneracion:int)
+  +getTipo(): String
+  +setTipo(t:String): void
+  +getRut(): String
+  +setRut(r:String): void
+  +getPassword(): String
+  +setPassword(p:String): void
+  +getNombre(): String
+  +setNombre(n:String): void
+  +getRemuneracion(): int
+  +setRemuneracion(r:int): void
+  +autenticar(pass:String): boolean
+}
+
+class Administrador extends Empleado {
+  -esSuperadmin: boolean
+  +Administrador(...)
+  +agregarProducto(t:Tienda,p:Producto): void
+  +removerProducto(t:Tienda,id:String): boolean
+  +modificarProducto(t:Tienda,p:Producto): boolean
+  +generarInformeInventario(t:Tienda): String
+}
+
+class Cajero extends Empleado {
+  -numCaja: int
+  -ventasHoy: int
+  -montoCaja: double
+  -totalIncentivos: int      ' 5% acumulado
+  +Cajero(...)
+  +iniciarVenta(): Venta
+  +agregarItemAVenta(v:Venta,idProducto:String,cantidad:int): boolean
+  +cobrar(v:Venta,monto:double): boolean
+  +cerrarCaja(): double
+  +acumularIncentivo(monto:int): void
+}
+
+class Reponedor extends Empleado {
+  -seccion: String
+  -capacidadHora: int
+  -tipoAsignado: CategoriaProducto
+  +Reponedor(...)
+  +reponerProducto(t:Tienda,id:String,cantidad:int): void
+  +eliminarStock(t:Tienda,id:String): boolean
+  +planificarReponido(): List<String>
+}
+
+' ===== VENTAS =====
+class DetalleVenta {
+  -codigoProducto: String
+  -nombreProducto: String
+  -cantidad: int
+  -precioUnitario: int
+  -descuentoAplicado: double
+  -subtotal: int
+}
+
+class Venta {
+  -id: String
+  -rutCliente: String
+  -rutCajero: String
+  -fecha: LocalDateTime
+  -items: List<DetalleVenta>
+  -total: int
+  +Venta(cajero:Cajero,rutCliente:String)
+  +agregarItem(p:Producto,cant:int,desc:double): void
+  +calcularTotal(): int
+  +finalizar(): boolean
+}
+
+class DescuentoSesion {
+  -categoriaAplicable: CategoriaProducto
+  -porcentaje: double  ' 0.25 .. 0.75
+}
+
+class Sesion {
+  -empleado: Empleado
+  -descuento: DescuentoSesion
+  +getEmpleado(): Empleado
+  +getDescuento(): DescuentoSesion
+}
+
+' ===== SISTEMA //./.// TIENDA =====
+class Tienda {
+  -catalogo: Map<String,Producto>
+  -empleados: Map<String,Empleado>
+  -ventas: List<Venta>
+  -sesionActual: Sesion
+  +Tienda()
+  +cargarProductosDesde(path:String): void
+  +cargarEmpleadosDesde(path:String): void
+  +login(rut:String,pass:String): boolean
+  +logout(): void
+  +iniciarSesionCajero(rut:String): DescuentoSesion
+  +buscarProducto(id:String): Producto
+  +listarPorTipo(tipo:TipoProducto): List<Producto>
+  +listarProductos(): void      ' imprime y marca "bajo stock" siel stock<5
+  +registrarVenta(v:Venta): void
+  +obtenerStockTotal(): int
+  +validarVenderProducto(id:String,cantidad:int): boolean
+}
+
+class ParserFiles implements IArchivoParser {
+  +ParserFiles()
+  +parseProductos(path:String): List<Producto>
+  +parseEmpleados(path:String): List<Empleado>
+  +validarLineaProducto(line:String): boolean
+  +validarLineaEmpleado(line:String): boolean
+  +limpiarCampo(s:String): String
+}
+'#subarashi
+' ===== RELACIONES =====
+Producto <|-- Bebida
+Producto <|-- Alimento
+Bebida <|-- BebidaGeneral
+Bebida <|-- BebidaAlcoholica
+Bebida <|-- BebidaCaliente
+Alimento <|-- AlimentoPerecible
+Alimento <|-- AlimentoNoPerecible
+Alimento <|-- AlimentoCongelado
+
+Empleado <|-- Administrador
+Empleado <|-- Cajero
+Empleado <|-- Reponedor
+
+Tienda "1" o-- "0..1" Sesion
+Tienda "1" o-- "*" Producto : catalogo
+Tienda "1" o-- "*" Empleado : empleados
+Tienda "1" o-- "*" Venta    : ventas
+Cajero "1" o-- "*" Venta    : realiza
+Venta "1" o-- "*" DetalleVenta
+ParserFiles ..> Producto
+ParserFiles ..> Empleado
+
+note right of BebidaAlcoholica
+  Validar edad >= restriccionEdad al venderr.
+end note
+
+note left of AlimentoPerecible
+  Comprobar fechaVencimiento antes de vender.
+end note
+
+note bottom of Tienda
+  listarProductos(): imprime "Stock insuficiente, llamar a reponedores"
+  para productos con stock < 5 (regla de visualización).
+end note
+@enduml
