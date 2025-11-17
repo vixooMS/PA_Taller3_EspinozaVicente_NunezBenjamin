@@ -1,0 +1,6 @@
+AD,11111111-1,pass123,Admin,1500000,true
+AD,21543210-8,admin45,José Ramírez,1350000,false
+CA,20123987-9,clave1,Pedro Soto,950000,3,10000
+CA,18907654-2,clave2,Javiera Díaz,900000,1,5000
+RE,21345678-1,reponer1,Carlos Mella,800000,Alimentos,150
+RE,22346789-2,reponer2,Ana Rivas,820000,Bebidas,120

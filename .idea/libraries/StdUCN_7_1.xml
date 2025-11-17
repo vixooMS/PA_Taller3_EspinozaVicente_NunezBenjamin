@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="StdUCN-7.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../progra avanzada taller 1/StdUCN-7.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../StdUCN-7.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../StdUCN-7.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
