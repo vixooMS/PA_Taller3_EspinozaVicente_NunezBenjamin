@@ -1,0 +1,84 @@
+Operación: RegistrarNuevoEmpleado (Cadena de texto rut, cadena de texto Nombre,cadena de texto Contraseña, números enteros remuneración, cadena detexto campos especificos)
+
+Descripción: Se registra un nuevo empleado en el sistema, según su tipo y los datos ingresados
+
+Pre-condiciones: El usuario que ejecuta la operación debe ser administrador
+		-El rut ingresado no debe existir previamente en el sistema
+		-Si el nuevo empleado es Cajero, no debe existir otro cajero con el mismo numero de caja.
+
+Post-condiciones:  El nuevo empelado queda almacenado dentro del contenedor.
+		 -La cantidad total aumenta en 1
+-------------------------------------------------------------------
+Operación: ListaEmpleados()
+
+Descripción: Se imprime toda la información de los empleados registrados en el sistema.
+
+Pre-condiciones: -El usuario debe tener permisos validos para acceder a la información.
+
+Post-condiciones: No hay cambios en el sistema, solo se muestran los resultados por pantalla. 
+-------------------------------------------------------------------
+Operación: ListaProductos()
+
+Descripción: Se muestran por pantalla la información de todos los productos registrados.
+
+Pre-condiciones:
+		-Se debe verificar el rol del usuario
+
+Post-condiciones: No hay cambios en el sistema, solo se muestran los resultados por pantalla. 
+-------------------------------------------------------------------
+Operación: ListaTodasLasVentas()
+
+Descripción: Se debe mostrar por pantalla todas las ventas registradas en el sistema.
+
+Pre-condiciones: Verificar que el usuario sea administrador
+
+Post-condiciones: No hay cambios en el sistema, solo se muestran los resultados por pantalla. 
+-------------------------------------------------------------------
+Operación: RealizarVenta ()
+
+Descripción: Se registra la venta realizada por uncajero, aplicando descuentos de sesión y actualizando el inventario
+
+Pre-condiciones: Verificar que el usuario sea Cajero
+		-Debe existir un producto valido entre los códigos ingresados
+		-la cantidad debe ser mayor a 0.
+
+Post-condiciones: -Se crea Venta con sus respectivos detalles de venta
+		  -Se descuenta del stock la cantidad vendida de  cada producto
+		  -El cajero acumula el 5% del total de la venta como incentivo
+		  - La venta se agrega al historial del sistema 
+-------------------------------------------------------------------
+Operación: VerVentasRealizadas()
+
+Descripción: Se debe imprimir el historial de ventas realizadas por un cajero
+
+Pre-condiciones:-Si le usaurio es cajero, solo puede ver sus propias ventas
+		-Si el usuario es administrador, puede ver las ventas de cualquier cajero
+
+Post-condiciones: No hay cambios en el sistema, solo se muestran los resultados por pantalla. 
+
+-------------------------------------------------------------------
+Operación: ReponerStock()
+
+Descripción: Incrementa el stock de un producto, siempre que el tipo corresponda al asignado al reponedor.
+
+Pre-condiciones:-Verificar que el usuario sea reponedor
+		-Verificar que la cantidad sea mayor a 0
+		-Verificar que el código exista del producto exista en el sistema
+		-El tipo de producto debe coincidir con la categoría que maneja el reponedor.
+
+
+Post-condiciones:-Se actualiza el stock del producto
+		 -Se incrementa el contador de unidades repuestas por el reponedor
+			
+-------------------------------------------------------------------
+Operación: EliminarStock
+
+Descripción: Elimina el stock de un producto perteneciente a la categoría manejada por el reponedor.
+
+Pre-condiciones:-Verificar que el usuario es un reponedor
+		-Verificar que el código del producto exista
+		-Verificar que el tipo de producto corresponda al manejado por el reponedor
+		-Confirmación de eliminación por pantalla
+		-El stock del producto se establece en 0
+
+Post-condiciones: 

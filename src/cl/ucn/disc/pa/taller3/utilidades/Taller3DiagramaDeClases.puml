@@ -1,0 +1,213 @@
+@startuml
+
+package "cl-ucn-disc-pa-taller3" {
+
+  ' ------------------------------------------------------
+  '                  PAQUETE DOMINIO
+  ' ------------------------------------------------------
+
+  package "Dominio" {
+
+      ' -------------------------------
+      '           EMPLEADOS
+      ' -------------------------------
+
+      abstract class Empleado {
+          #rut: String
+          #contrasenia: String
+          #nombre: String
+          #tipoEmpleado: String
+          #remuneracion: int
+      }
+
+      class Administrador extends Empleado {
+          -superAdministrador: boolean
+      }
+
+      class Cajero extends Empleado {
+          -numeroCaja: int
+          -totalDineroRecaudado: int
+          -ventasRealizadas: Venta[1000]
+          -cantidadVentasRealizadas: int
+          -comisionAcumulada: int
+          +registrarVenta(v: Venta): void
+          +verVentasRealizadas(): void
+          +calcularComision(v: Venta): int
+      }
+
+      class Reponedor extends Empleado {
+          -zona: String
+          -tipoProductoAsignado: String
+          -totalRepuesto: int
+      }
+
+      ' -------------------------------
+      '      CONTENEDOR PRINCIPAL
+      ' -------------------------------
+
+      class ContenedorMinimarket {
+          -empleados: Empleado[200]
+          -cantidadEmpleados: int
+
+          -productos: Producto[500]
+          -cantidadProductos: int
+
+          -ventas: Venta[10000]
+          -cantidadVentas: int
+      }
+
+
+      ' -------------------------------
+      '           PRODUCTOS
+      ' -------------------------------
+
+      abstract class Producto {
+          #codigo: String
+          #nombre: String
+          #precio: int
+          #marca: String
+          #cantidad: int
+          #proveedor: String
+      }
+
+      abstract class Bebida extends Producto {
+          #volumenLitros: double
+          #cantidadSellos: int
+          #tipoEnvase: String
+      }
+
+      class BebidaGaseosa extends Bebida {
+          -retornable: boolean
+          -nivelAzucar: String
+          -version: String
+      }
+
+      class BebidaAlcoholica extends Bebida {
+          -gradosAlcohol: double
+          -paisOrigen: String
+          -controlEdad: String
+      }
+
+      class BebidaCaliente extends Bebida {
+          -tipoBebida: String
+          -temperaturaServicio: String
+          -tamanoEnvase: String
+      }
+
+      abstract class Alimento extends Producto {
+          #fechaVencimiento: String
+          #peso: String
+          #origen: String
+      }
+
+      class AlimentoPerecedero extends Alimento {
+          -controlRefrigeracion: String
+          -fechaEnvasado: String
+          -condicionesConservacion: String
+      }
+
+      class AlimentoNoPerecedero extends Alimento {
+          -tiempoAlmacenamientoPermitido: String
+          -tipoEnvase: String
+          -descripcionProducto: String
+      }
+
+      class AlimentoCongelado extends Alimento {
+          -temperaturaAlmacenamiento: float
+          -fechaCongelacion: String
+          -tipoAlimento: String
+      }
+
+
+      ' -------------------------------
+      '              VENTA
+      ' -------------------------------
+
+      class Venta {
+          -rutEmpleado: String
+          -rutCliente: String
+          -fecha: String
+          -productos: Producto[200]
+          -cantidades: int[200]
+          -montosPorProducto: int[200]
+          -cantidadItems: int
+          -montoTotal: int
+
+          +agregarProducto(p: Producto, cantidad: int): void
+          +calcularTotal(): void
+      }
+
+  }
+
+
+  ' ------------------------------------------------------
+  '                  PAQUETE SERVICIO
+  ' ------------------------------------------------------
+
+  package "Servicio" {
+
+      interface Sistema {
+          +iniciarSesion(rut: String, contrasenia: String): Empleado
+          +cerrarSesion(): void
+
+          +cargarEmpleados(): void
+          +cargarProductos(): void
+
+          +registrarEmpleado(admin: Administrador, nuevo: Empleado): void
+          +existeRut(rut: String): boolean
+          +existeCaja(caja: int): boolean
+
+          +registrarVenta(rutCajero: String, rutCliente: String, codigos: String[], cantidades: int[]): void
+          +listaProductos(): void
+          +listaEmpleados(): void
+          +listaVentasCajero(rutCajero: String): void
+          +listaVentasTotales(): void
+
+          +aplicarDescuentoSesion(rutCajero: String): void
+          +verVentasRealizadas(rutCajero: String): void
+      }
+
+      class SistemaMinimarket implements Sistema {
+          -contenedor: ContenedorMinimarket
+          -tipoDescuentoSesion: String
+          -porcentajeDescuento: double
+      }
+
+  }
+
+
+  ' ------------------------------------------------------
+  '                  PAQUETE VISTA
+  ' ------------------------------------------------------
+
+  package "Vista" {
+
+      class Vista {
+          -sistema: Sistema
+          +inicio(): void
+      }
+
+  }
+
+
+  ' ------------------------------------------------------
+  '                  RELACIONES UML
+  ' ------------------------------------------------------
+
+  Vista --> Sistema : usa
+
+  SistemaMinimarket ..|> Sistema
+  SistemaMinimarket --> ContenedorMinimarket
+
+  Cajero "1" --> "*" Venta : realiza
+  Venta "*" --> "1" Cajero : rutEmpleado
+
+  Venta "1" --> "*" Producto : contiene
+
+  ContenedorMinimarket "1" --> "*" Empleado
+  ContenedorMinimarket "1" --> "*" Producto
+  ContenedorMinimarket "1" --> "*" Venta
+
+}
+
+@enduml
